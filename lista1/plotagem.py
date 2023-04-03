@@ -1,22 +1,22 @@
 # Arquivo destinado a aos códigos para plotagem das funções no R3
 
-# Código Exemplo da Matplotlib para superfícies 3D: https://matplotlib.org/stable/plot_types/3D/surface3d_simple.html
 import matplotlib.pyplot as plt
-import numpy as np
+from matplotlib import cm
+from matplotlib.ticker import LinearLocator
 
-# Make data
-X = np.arange(-5, 5, 0.25)
-Y = np.arange(-5, 5, 0.25)
-X, Y = np.meshgrid(X, Y)
-R = np.sqrt(X**2 + Y**2)
-Z = np.sin(R)
+def plota_3D(X, Y, Z, limits):
+       #Cria figura e eixos
+       fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
-# Plot the surface
-fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-ax.plot_surface(X, Y, Z, vmin=Z.min() * 2)
+       # Plota a superfície
+       surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+                              linewidth=0, antialiased=False)
 
-ax.set(xticklabels=[],
-       yticklabels=[],
-       zticklabels=[])
+       # Customização do eixo z.
+       #ax.set_zlim(limits[0], limits[1])
+       ax.zaxis.set_major_locator(LinearLocator(10))
 
-plt.show()
+       # A StrMethodFormatter is used automatically
+       ax.zaxis.set_major_formatter('{x:.02f}')
+
+       plt.show()
