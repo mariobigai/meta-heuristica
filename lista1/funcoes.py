@@ -1,13 +1,15 @@
 import numpy as np
 
-def func1(x, y):
-    # Função de Schwefel com d = 2
-    return 418.9829 * 2 - x * np.sin(np.sqrt(abs(x))) - y * np.sin(np.sqrt(abs(y)))
+## func(X) , onde X será um numpy.ndarray
 
-def func2(x, y):
+def func1(X):
+    # Função de Schwefel com d = 2
+    return 418.9829 * 2 - X[0] * np.sin(np.sqrt(abs(X[0]))) - X[1] * np.sin(np.sqrt(abs(X[1])))
+
+def func2(X):
     # Função de Rastrigin
-    return 20 + x**2 + y**2 - 10*(np.cos(2*np.pi*x) + np.cos(2*np.pi*y))
+    return 20 + X[0]**2 + X[1]**2 - 10*(np.cos(2*np.pi*X[0]) + np.cos(2*np.pi*X[1]))
 
 def func3(x, y):
     # Função Exponencial
-    return x * np.exp(-(x**2 + y**2))
+    return X[1] * np.exp(-(X[0]**2 + X[1]**2))
