@@ -9,7 +9,7 @@ def plota_3D(X, Y, Z, limits):
        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
        # Plota a superfície
-       surf = ax.plot_surface(X, Y, Z, cmap=cm.coolwarm,
+       surf = ax.plot_surface(X, Y, Z, cmap=cm.jet,
                               linewidth=0, antialiased=False)
 
        # Customização do eixo z.
