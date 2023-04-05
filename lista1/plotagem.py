@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 
-def plota_3D(X, Y, Z, limits):
+def plota_3D(X, Y, Z, best_ponto):
        #Cria figura e eixos
        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 
@@ -18,5 +18,7 @@ def plota_3D(X, Y, Z, limits):
 
        # A StrMethodFormatter is used automatically
        ax.zaxis.set_major_formatter('{x:.02f}')
+
+       ax.scatter(best_ponto[0], best_ponto[1], best_ponto[2], edgecolor='black', c='black' , marker='x')
 
        plt.show()
