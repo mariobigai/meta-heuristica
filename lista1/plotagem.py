@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 
-def plota_3D(X, Y, Z, best_ponto):
+def plota_3D(X, Y, Z, best_ponto=[0,0,0]):
        #Cria figura e eixos
        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
 

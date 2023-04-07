@@ -10,6 +10,6 @@ def func2(X):
     # Função de Rastrigin
     return 20 + X[0]**2 + X[1]**2 - 10*(np.cos(2*np.pi*X[0]) + np.cos(2*np.pi*X[1]))
 
-def func3(x, y):
+def func3(X):
     # Função Exponencial
     return X[1] * np.exp(-(X[0]**2 + X[1]**2))
