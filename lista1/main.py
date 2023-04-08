@@ -40,7 +40,8 @@ z = func(XY) #  Avalia a função em todos os pontos - Valores da função (Veri
 modelos = AlgoritmoGenetico.gera_modelos(np.array([[x[0], x[-1]], [x[0], x[-1]]]), func)
 for modelo in modelos:
     for i in range(10):
-        modelo.run(stop_when_reached = float(min(z) + 1e-4) if min(z) is not None else None) #Critério de parada
+        #modelo.run(stop_when_reached = float(min(z) + 1e-4) if min(z) is not None else None) #Critério de parada
+        modelo.run()
 #-------------------------------------------------------------
 #Plotagens para relatório
 plotagem.plota_3D(X[0], X[1], Z) #Plota o gráfico

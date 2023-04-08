@@ -11,7 +11,7 @@ Seleção: Torneio e Roleta
 """
 # Crossover:uniforme  Seleção:Roleta
 parametros_uniforme_roleta=AlgorithmParams(
-                     max_num_iteration = None,
+                     max_num_iteration = 200,
                      population_size = 150,
                      mutation_probability = 0.03,
                      mutation_discrete_probability = None,
@@ -24,7 +24,7 @@ parametros_uniforme_roleta=AlgorithmParams(
                      )
 # Crossover:uniforme Seleção:torneio
 parametros_uniforme_torneio=AlgorithmParams(
-                     max_num_iteration = None,
+                     max_num_iteration = 200,
                      population_size = 150,
                      mutation_probability = 0.03,
                      mutation_discrete_probability = None,
@@ -38,7 +38,7 @@ parametros_uniforme_torneio=AlgorithmParams(
 
 #Crossover: Aritmético Seleção:Roleta
 parametros_aritmetico_roleta=AlgorithmParams(
-                     max_num_iteration = None,
+                     max_num_iteration = 200,
                      population_size = 150,
                      mutation_probability = 0.03,
                      mutation_discrete_probability = None,
@@ -52,7 +52,7 @@ parametros_aritmetico_roleta=AlgorithmParams(
 
 #Crossover: Aritmético Seleção:Torneio
 parametros_aritmetico_torneio=AlgorithmParams(
-                     max_num_iteration = None,
+                     max_num_iteration = 200,
                      population_size = 150,
                      mutation_probability = 0.03,
                      mutation_discrete_probability = None,
@@ -69,7 +69,7 @@ def retorna_modelo(limites, parametros, funcao):
     modelo = ga(funcao, dimension = 2,
                     variable_type='real',
                      variable_boundaries = limites,
-                     function_timeout = 15,
+                     #function_timeout = 15,
                      algorithm_parameters=parametros
                 )
     return modelo
