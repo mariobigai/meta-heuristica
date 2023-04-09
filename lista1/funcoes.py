@@ -11,5 +11,5 @@ def func2(X):
     return 20 + X[0]**2 + X[1]**2 - 10*(np.cos(2*np.pi*X[0]) + np.cos(2*np.pi*X[1]))
 
 def func3(X):
-    # Função Exponencial
-    return X[1] * np.exp(-(X[0]**2 + X[1]**2))
+    # fitness para função exponencial Função Exponencial
+    return 1/(1+(X[0] * np.exp(-(X[0]**2 + X[1]**2))))
