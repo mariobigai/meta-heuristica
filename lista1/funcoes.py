@@ -13,6 +13,7 @@ def func2(X):
 def func3(X):
     # Função Exponencial R3
     return (X[0] * np.exp(-(X[0]**2 + X[1]**2)))
+
 def func4(X):
     # fitness para função exponencial Função Exponencial
     return 1/(1+(X[0] * np.exp(-(X[0]**2 + X[1]**2))))

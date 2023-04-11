@@ -45,15 +45,17 @@ while(True):
 
 #label_y do relatório
 if func == funcoes.func4:
-    label_y = 'Função Mininzada'
-else:
     label_y = 'Função Maximizada'
+else:
+    label_y = 'Função Minimizada'
 
 lista_melhores_fitness = []
 lista_melhores_solucoes = []
 lista_otimo_encontrado = []
 #--------------------------------------------------------------------
 modelos = AlgoritmoGenetico.gera_modelos(np.array([[x[0], x[-1]], [x[0], x[-1]]]), func)
+
+#Laço principal
 for modelo in modelos:
 
     #Verifica qual modelo está rodando e define modelo_nome
@@ -67,13 +69,19 @@ for modelo in modelos:
         modelo_nome = 'TorneioAritimético'
 
     #Define os parâmetros do relatório de evolução de fitness
-    modelo.checked_reports.extend(
-        [('report_avarage', np.mean), ('report_worst', np.max)]
-    )
+    if func == funcoes.func4:
+        modelo.checked_reports.extend(
+            [('report_avarage', np.mean), ('report_worst', np.max)]
+        )
+        melhor_fitness_geral_modelo = -math.inf
+    else:
+        modelo.checked_reports.extend(
+            [('report_avarage', np.mean), ('report_worst', np.max)]
+        )
+        melhor_fitness_geral_modelo = math.inf
 
     #Lógica para pegarmos o modelo com melhor fintnesse fazer o relatório de evolução de fitness
     melhor_modelo = 0
-    melhor_fitness_geral_modelo = math.inf
 
     #lista para box-plot de numero de gerações
     lista_num_gen = []
@@ -87,9 +95,14 @@ for modelo in modelos:
 
         #verifica se é o melhor fitness
         melhor_fitness = modelo.result.score
-        if melhor_fitness < melhor_fitness_geral_modelo:
-            melhor_fitness_geral_modelo = melhor_fitness
-            melhor_modelo = modelo
+        if func == funcoes.func4:
+            if melhor_fitness > melhor_fitness_geral_modelo:
+                melhor_fitness_geral_modelo = melhor_fitness
+                melhor_modelo = modelo
+        else:
+            if melhor_fitness < melhor_fitness_geral_modelo:
+                melhor_fitness_geral_modelo = melhor_fitness
+                melhor_modelo = modelo
 
     names = [name for name, _ in melhor_modelo.checked_reports[::-1]] #separa as variáveis do checked_reports
     plot_several_lines(
