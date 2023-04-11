@@ -59,26 +59,20 @@ modelos = AlgoritmoGenetico.gera_modelos(np.array([[x[0], x[-1]], [x[0], x[-1]]]
 for modelo in modelos:
 
     #Verifica qual modelo está rodando e define modelo_nome
-    if 'uniform' in str(modelo.crossover) and 'roulette' in str(modelo.selection):
-        modelo_nome = 'RoletaUniforme'
+    if 'uniform' in str(modelo.crossover) and 'ranking' in str(modelo.selection):
+        modelo_nome = 'RankingUniforme'
     if 'uniform' in str(modelo.crossover) and 'tournament' in str(modelo.selection):
         modelo_nome = 'TorneioUniforme'
-    if 'arithmetic' in str(modelo.crossover) and 'roulette' in str(modelo.selection):
-        modelo_nome = 'RoletaAritimético'
+    if 'arithmetic' in str(modelo.crossover) and 'ranking' in str(modelo.selection):
+        modelo_nome = 'RankingAritimético'
     if 'arithmetic' in str(modelo.crossover) and 'tournament' in str(modelo.selection):
         modelo_nome = 'TorneioAritimético'
 
     #Define os parâmetros do relatório de evolução de fitness
-    if func == funcoes.func4:
-        modelo.checked_reports.extend(
-            [('report_avarage', np.mean), ('report_worst', np.max)]
-        )
-        melhor_fitness_geral_modelo = -math.inf
-    else:
-        modelo.checked_reports.extend(
-            [('report_avarage', np.mean), ('report_worst', np.max)]
-        )
-        melhor_fitness_geral_modelo = math.inf
+    modelo.checked_reports.extend(
+        [('report_avarage', np.mean), ('report_worst', np.max)]
+    )
+    melhor_fitness_geral_modelo = -math.inf
 
     #Lógica para pegarmos o modelo com melhor fintnesse fazer o relatório de evolução de fitness
     melhor_modelo = 0
