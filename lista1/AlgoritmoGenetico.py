@@ -9,11 +9,11 @@ parametros_uniforme_roleta=AlgorithmParams(
                      mutation_probability = 0.1,
                      mutation_discrete_probability = None,
                      elit_ratio = 0,
-                     parents_portion = 0.2,
+                     parents_portion = 0.1,
                      crossover_type = Crossover.uniform(),
                      mutation_type = 'uniform_by_center',
                      selection_type = Selection.ranking(),
-                     max_iteration_without_improv = 10
+                     max_iteration_without_improv = 20
                      )
 # Crossover:uniforme Seleção:torneio
 parametros_uniforme_torneio=AlgorithmParams(
@@ -22,11 +22,11 @@ parametros_uniforme_torneio=AlgorithmParams(
                      mutation_probability = 0.1,
                      mutation_discrete_probability = None,
                      elit_ratio = 0,
-                     parents_portion = 0.2,
+                     parents_portion = 0.1,
                      crossover_type = Crossover.uniform(),
                      mutation_type = 'uniform_by_center',
                      selection_type = Selection.tournament(),
-                     max_iteration_without_improv = 10
+                     max_iteration_without_improv = 20
                      )
 
 #Crossover: Aritmético Seleção:Roleta
@@ -36,11 +36,11 @@ parametros_aritmetico_roleta=AlgorithmParams(
                      mutation_probability = 0.1,
                      mutation_discrete_probability = None,
                      elit_ratio = 0,
-                     parents_portion = 0.2,
+                     parents_portion = 0.1,
                      crossover_type = Crossover.arithmetic(),
                      mutation_type = 'uniform_by_center',
                      selection_type = Selection.ranking(),
-                     max_iteration_without_improv = 10
+                     max_iteration_without_improv = 20
                      )
 
 #Crossover: Aritmético Seleção:Torneio
@@ -50,11 +50,11 @@ parametros_aritmetico_torneio=AlgorithmParams(
                      mutation_probability = 0.1,
                      mutation_discrete_probability = None,
                      elit_ratio = 0,
-                     parents_portion = 0.2,
+                     parents_portion = 0.1,
                      crossover_type = Crossover.arithmetic(),
                      mutation_type = 'uniform_by_center',
                      selection_type = Selection.tournament(),
-                     max_iteration_without_improv = 10
+                     max_iteration_without_improv = 20
                      )
 
 lista_parametros = [parametros_uniforme_roleta, parametros_uniforme_torneio, parametros_aritmetico_roleta, parametros_aritmetico_torneio]

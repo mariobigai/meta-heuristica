@@ -72,7 +72,10 @@ for modelo in modelos:
     modelo.checked_reports.extend(
         [('report_avarage', np.mean), ('report_worst', np.max)]
     )
-    melhor_fitness_geral_modelo = -math.inf
+    if func == funcoes.func4:
+        melhor_fitness_geral_modelo = -math.inf
+    else:
+        melhor_fitness_geral_modelo = math.inf
 
     #Lógica para pegarmos o modelo com melhor fintnesse fazer o relatório de evolução de fitness
     melhor_modelo = 0
@@ -99,16 +102,35 @@ for modelo in modelos:
                 melhor_modelo = modelo
 
     names = [name for name, _ in melhor_modelo.checked_reports[::-1]] #separa as variáveis do checked_reports
-    plot_several_lines(
-        lines=[getattr(melhor_modelo, name) for name in names],
-        colors=('green', 'red', 'blue'),
-        labels=['pior fitness', 'fitness medio', 'melhor fitness'],
-        linewidths=(1, 1.5, 1, 2),
-        xlabel='Gerações',
-        ylabel=label_y,
-        title=f'{modelo_nome} {nome_funcao}',
-        save_as=f'./{modelo_nome}{nome_funcao}'
-    )
+    lines = [getattr(melhor_modelo, name) for name in names]
+    pior_fitness_temporal = lines[0]
+    medio_fitness_temporal = lines[1]
+    melhor_fitness_temporal = lines[2]
+
+    valor_maximo = max([max(lista) for lista in lines])
+    valor_minimo = min([min(lista) for lista in lines])
+
+    pior_fitness_temporal_nomalizado = [1/(1+((fit-valor_minimo)/(valor_maximo-valor_minimo))) for fit in pior_fitness_temporal]
+    pior_fitness_temporal_nomalizado.insert(0,0)
+    medio_fitness_temporal_nomalizado = [1/(1+(fit - valor_minimo) / (valor_maximo - valor_minimo)) for fit in medio_fitness_temporal]
+    medio_fitness_temporal_nomalizado.insert(0, 0)
+    melhor_fitness_temporal_nomalizado = [1/(1+(fit - valor_minimo) / (valor_maximo - valor_minimo)) for fit in melhor_fitness_temporal]
+    melhor_fitness_temporal_nomalizado.insert(0, 0)
+
+    num_geracoes_temporal = list(np.arange(0,num_geracoes+1,1))
+
+    plotagem.plotFitnessTemporal(f'{modelo_nome}',num_geracoes_temporal, pior_fitness_temporal_nomalizado, medio_fitness_temporal_nomalizado, melhor_fitness_temporal_nomalizado)
+
+    # plot_several_lines(
+    #     lines=[getattr(melhor_modelo, name) for name in names],
+    #     colors=('green', 'red', 'blue'),
+    #     labels=['pior fitness', 'fitness medio', 'melhor fitness'],
+    #     linewidths=(1, 1.5, 1, 2),
+    #     xlabel='Gerações',
+    #     ylabel=label_y,
+    #     title=f'{modelo_nome} {nome_funcao}',
+    #     save_as=f'./{modelo_nome}{nome_funcao}'
+    # )
 
     lista_melhores_fitness.append(melhor_fitness_geral_modelo) #Armazena melhor fitness do modelo
     lista_melhores_solucoes.append(melhor_modelo.result.variable)
@@ -123,9 +145,11 @@ for modelo in modelos:
 
 #Salva as melhores soluções encontradas dos modelos
 np.savetxt(f'./ListaMelhoresSolus{nome_funcao}.txt', lista_melhores_solucoes, fmt='%s')
+print(lista_melhores_solucoes, '\n')
 
 #Salva os melhores fitness encontradas dos modelos
 np.savetxt(f'./ListaMelhoresFit{nome_funcao}.txt', lista_melhores_fitness, fmt='%f')
+print(lista_melhores_fitness, '\n')
 #-------------------------------------------------------------
 #Plotagens para relatório
 print(lista_otimo_encontrado)

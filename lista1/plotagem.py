@@ -36,3 +36,15 @@ def plota_boxplot(dados, modelo_nome, nome_func):
        plt.savefig(f'./Boxplot{modelo_nome}{nome_func}')
        #Plota o boxplot
        plt.show()
+
+def plotFitnessTemporal(titulo, gen, fitPior, fitMedio, fitMelhor):
+       fig, ax = plt.subplots()
+       fig.suptitle(titulo)
+       ax.plot(gen, fitPior, label="Pior fitness")
+       ax.plot(gen, fitMedio, label="Fitness médio")
+       ax.plot(gen, fitMelhor, label="Melhor fitness")
+       plt.legend()
+       ax.set_xlabel("Gerações")
+       ax.set_ylabel("Fitness Normalizado")
+       plt.savefig(f'./Temporal {titulo}')
+       plt.show()
