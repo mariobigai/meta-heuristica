@@ -5,13 +5,19 @@ from matplotlib import cm
 from matplotlib.ticker import LinearLocator
 import seaborn as sns
 
-def plota_3D(X, Y, Z, best_ponto=None):
+def gera_x_y(lista_np_arrays):
+       x, y, b = [], [], []
+       for i in range(len(lista_np_arrays)):
+              ai = lista_np_arrays[i]
+              x.append(ai[0])
+              y.append(ai[1])
+       b.append(x)
+       b.append(y)
+       return b
+
+def plota_3D(X, Y, Z, func=None, todas_solus=None, melhores_solus=None, melhor_solu_de_todas=None):
        #Cria figura e eixos
        fig, ax = plt.subplots(subplot_kw={"projection": "3d"})
-
-       # Plota a superfície
-       ax.plot_surface(X, Y, Z, cmap=cm.jet,
-                              linewidth=0, antialiased=False)
 
        # Customização do eixo z.
        #ax.set_zlim(limits[0], limits[1])
@@ -20,9 +26,15 @@ def plota_3D(X, Y, Z, best_ponto=None):
        # A StrMethodFormatter is used automatically
        ax.zaxis.set_major_formatter('{x:.02f}')
 
-       if best_ponto is not None:
-              ax.scatter(best_ponto[0], best_ponto[1], best_ponto[2], c='black', marker='o', s=40)
+       if func is not None:
+              for i in range(len(todas_solus)):
+                     ax.scatter(todas_solus[i][0], todas_solus[i][1], func(todas_solus[i]), c='red', marker='.', s=30)
+              for i in range(len(melhores_solus)):
+                     ax.scatter(melhores_solus[i][0], melhores_solus[i][1], func(melhores_solus[i]), c='black', marker='x', s=40)
+              ax.scatter(melhor_solu_de_todas[0], melhor_solu_de_todas[1], func(melhor_solu_de_todas), c='purple', marker='o', s=60)
 
+       # Plota a superfície
+       ax.plot_surface(X, Y, Z, cmap=cm.jet, alpha=0.65)
        plt.show()
 
 def plota_boxplot(dados, modelo_nome, nome_func):

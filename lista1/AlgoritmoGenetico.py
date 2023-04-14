@@ -69,3 +69,4 @@ def retorna_modelo(limites, parametros, funcao):
 
 def gera_modelos(limites, funcao, lista = lista_parametros):
     return [retorna_modelo(limites, par, funcao) for par in lista]
+

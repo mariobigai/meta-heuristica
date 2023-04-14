@@ -49,13 +49,17 @@ if func == funcoes.func4:
 else:
     label_y = 'Função Minimizada'
 
-lista_melhores_fitness = []
+lista_solucoes = []
+lista_fitness = []
+lista_otimo = []
 lista_melhores_solucoes = []
-lista_otimo_encontrado = []
+lista_melhores_fitness = []
+lista_melhores_otimos = []
 #--------------------------------------------------------------------
+#Gera modelos definidos em AlgoritmoGenetico.py
 modelos = AlgoritmoGenetico.gera_modelos(np.array([[x[0], x[-1]], [x[0], x[-1]]]), func)
 
-#Laço principal
+#Laço principal - Percorre cada modelo
 for modelo in modelos:
 
     #Verifica qual modelo está rodando e define modelo_nome
@@ -72,10 +76,8 @@ for modelo in modelos:
     modelo.checked_reports.extend(
         [('report_avarage', np.mean), ('report_worst', np.max)]
     )
-    if func == funcoes.func4:
-        melhor_fitness_geral_modelo = -math.inf
-    else:
-        melhor_fitness_geral_modelo = math.inf
+    #seta o melhor_fitness_geral inicial
+    melhor_fitness_geral_modelo = math.inf
 
     #Lógica para pegarmos o modelo com melhor fintnesse fazer o relatório de evolução de fitness
     melhor_modelo = 0
@@ -83,7 +85,7 @@ for modelo in modelos:
     #lista para box-plot de numero de gerações
     lista_num_gen = []
 
-    #Roda o modelo 10 vezes e salva o melhor resultado
+    #Roda o modelo da iteração 10 vezes
     for i in range(10):
         modelo.run(no_plot=True) #roda a otimização
 
@@ -91,81 +93,84 @@ for modelo in modelos:
         lista_num_gen.append(num_geracoes) #guarda numero de gerações do modelo - boxplot
 
         #verifica se é o melhor fitness
-        melhor_fitness = modelo.result.score
+        fitness = modelo.result.score
+        if  fitness < melhor_fitness_geral_modelo:
+            melhor_fitness_geral_modelo = fitness
+            melhor_modelo = modelo
+
+        lista_solucoes.append(modelo.result.variable) #salva solução
+        lista_fitness.append(fitness) #salva fitness
         if func == funcoes.func4:
-            if melhor_fitness > melhor_fitness_geral_modelo:
-                melhor_fitness_geral_modelo = melhor_fitness
-                melhor_modelo = modelo
+            lista_otimo.append(funcoes.func3(modelo.result.variable)) #salva ótimo - maximização
         else:
-            if melhor_fitness < melhor_fitness_geral_modelo:
-                melhor_fitness_geral_modelo = melhor_fitness
-                melhor_modelo = modelo
+            lista_otimo.append(func(modelo.result.variable))          #salva ótimo - minimização
+
+    lista_melhores_fitness.append(melhor_fitness_geral_modelo)  # Salva melhor fitness das 10 iterações
+    lista_melhores_solucoes.append(melhor_modelo.result.variable) #Salva a melhor solução das 10 iterações
+    if func == funcoes.func4:
+        lista_melhores_otimos.append(funcoes.func3(melhor_modelo.result.variable)) #Salva melhor ótimo - maximização
+    else:
+        lista_melhores_otimos.append(func(melhor_modelo.result.variable)) #Salva melhor ótimo - minimização
 
     names = [name for name, _ in melhor_modelo.checked_reports[::-1]] #separa as variáveis do checked_reports
-    lines = [getattr(melhor_modelo, name) for name in names]
+    lines = [getattr(melhor_modelo, name) for name in names]          #gera os fitness temporais
     pior_fitness_temporal = lines[0]
     medio_fitness_temporal = lines[1]
     melhor_fitness_temporal = lines[2]
 
-    valor_maximo = max([max(lista) for lista in lines])
-    valor_minimo = min([min(lista) for lista in lines])
+    valor_maximo = max([max(lista) for lista in lines]) #Maior fitness de todos
+    valor_minimo = min([min(lista) for lista in lines]) #Menor fitness de todos
 
     pior_fitness_temporal_nomalizado = [1/(1+((fit-valor_minimo)/(valor_maximo-valor_minimo))) for fit in pior_fitness_temporal]
-    pior_fitness_temporal_nomalizado.insert(0,0)
     medio_fitness_temporal_nomalizado = [1/(1+(fit - valor_minimo) / (valor_maximo - valor_minimo)) for fit in medio_fitness_temporal]
-    medio_fitness_temporal_nomalizado.insert(0, 0)
     melhor_fitness_temporal_nomalizado = [1/(1+(fit - valor_minimo) / (valor_maximo - valor_minimo)) for fit in melhor_fitness_temporal]
-    melhor_fitness_temporal_nomalizado.insert(0, 0)
 
-    num_geracoes_temporal = list(np.arange(0,num_geracoes+1,1))
+    num_geracoes_temporal = list(np.arange(1,num_geracoes+1,1))
 
-    plotagem.plotFitnessTemporal(f'{modelo_nome}',num_geracoes_temporal, pior_fitness_temporal_nomalizado, medio_fitness_temporal_nomalizado, melhor_fitness_temporal_nomalizado)
-
-    # plot_several_lines(
-    #     lines=[getattr(melhor_modelo, name) for name in names],
-    #     colors=('green', 'red', 'blue'),
-    #     labels=['pior fitness', 'fitness medio', 'melhor fitness'],
-    #     linewidths=(1, 1.5, 1, 2),
-    #     xlabel='Gerações',
-    #     ylabel=label_y,
-    #     title=f'{modelo_nome} {nome_funcao}',
-    #     save_as=f'./{modelo_nome}{nome_funcao}'
-    # )
-
-    lista_melhores_fitness.append(melhor_fitness_geral_modelo) #Armazena melhor fitness do modelo
-    lista_melhores_solucoes.append(melhor_modelo.result.variable)
-    lista_otimo_encontrado.append(func(melhor_modelo.result.variable)) #Avalia a melhor solução na função e armazena na lista
-
-    plotagem.plota_boxplot(lista_num_gen, modelo_nome,
-                           nome_funcao)  # Plota e salva o Boxplot para cada modelo da função
-
-    print('\n', lista_num_gen, '\n')
+    # -------------------------------------------------------------------------------------------------------------------
+    #Save intermediário: Salva número de gerações de cada modelo (Melhor das 10 iterações)
     # Salva a quantidade de gerações de cada modelo para cada função em um TXT
     np.savetxt(f'./ListaNumGerações{modelo_nome}{nome_funcao}.txt', lista_num_gen, fmt='%d')
+    print('\n', lista_num_gen)
 
-#Salva as melhores soluções encontradas dos modelos
+    #-------------------------------------------------------------------------------------------------------------------
+    #Plotagens itermediárias: Fitness temporal de cada modelo (Melhor das 10 iterações) e Box-Plot modelo (melhor das 10 iterações)
+    plotagem.plotFitnessTemporal(f'{modelo_nome}',num_geracoes_temporal, pior_fitness_temporal_nomalizado, medio_fitness_temporal_nomalizado, melhor_fitness_temporal_nomalizado)
+    plotagem.plota_boxplot(lista_num_gen, modelo_nome, nome_funcao)  # Plota e salva o Boxplot para cada modelo da função
+
+#----------------------------------------------------------------------------------------------------------------------
+#Saves Finais: Lista de soluções, fitness e ótimos, melhores soluções melhores fitness e melhores ótimos
+#Salva todas as soluções encontradas
+np.savetxt(f'./ListaSolus{nome_funcao}.txt', lista_solucoes, fmt='%s')
+print('\n', lista_solucoes)
+
+#Salva as melhores soluções encontradas
 np.savetxt(f'./ListaMelhoresSolus{nome_funcao}.txt', lista_melhores_solucoes, fmt='%s')
-print(lista_melhores_solucoes, '\n')
+print('\n', lista_melhores_solucoes)
 
-#Salva os melhores fitness encontradas dos modelos
+#Salva todos os fitness encontrados
+np.savetxt(f'./ListaFit{nome_funcao}.txt', lista_fitness, fmt='%f')
+print('\n', lista_fitness)
+
+#Salva os melhores fitness encontrados
 np.savetxt(f'./ListaMelhoresFit{nome_funcao}.txt', lista_melhores_fitness, fmt='%f')
-print(lista_melhores_fitness, '\n')
+print('\n', lista_melhores_fitness)
+
+#Salva os ótimos encontrados
+np.savetxt(f'./ListaOtimo{nome_funcao}.txt', lista_otimo, fmt='%f')
+print('\n', lista_otimo)
+
+#Salva os ótimos encontrados
+np.savetxt(f'./ListaMelhoresOtimo{nome_funcao}.txt', lista_melhores_otimos, fmt='%f')
+print('\n', lista_melhores_otimos)
 #-------------------------------------------------------------
-#Plotagens para relatório
-print(lista_otimo_encontrado)
-print(min(lista_otimo_encontrado))
-print(lista_melhores_solucoes)
+#Plotagem final:
+
+melhor_solucao_de_todas = lista_melhores_solucoes[lista_melhores_fitness.index(min(lista_melhores_fitness))]
 
 if func == funcoes.func4:
-    indice_melhor_solucao_de_todas = lista_otimo_encontrado.index(min(lista_otimo_encontrado))
-    # Plota o gráfico 3D com o a solução destacada
-    plotagem.plota_3D(X[0], X[1], Z, [lista_melhores_solucoes[indice_melhor_solucao_de_todas][0],
-                                      lista_melhores_solucoes[indice_melhor_solucao_de_todas][1],
-                                      funcoes.func3(lista_melhores_solucoes[indice_melhor_solucao_de_todas])])
+    # Plota o gráfico 3D com o a solução destacada - maximização
+    plotagem.plota_3D(X[0], X[1], Z, funcoes.func3, lista_solucoes, lista_melhores_solucoes, melhor_solucao_de_todas)
 else:
-    indice_melhor_solucao_de_todas = lista_otimo_encontrado.index(min(lista_otimo_encontrado))
-    #Plota o gráfico 3D com o a solução destacada
-    plotagem.plota_3D(X[0], X[1], Z, [lista_melhores_solucoes[indice_melhor_solucao_de_todas][0],
-                                      lista_melhores_solucoes[indice_melhor_solucao_de_todas][1],
-                                      min(lista_otimo_encontrado)])
-
+    #Plota o gráfico 3D com o a solução destacada - minimização
+    plotagem.plota_3D(X[0], X[1], Z, func, lista_solucoes, lista_melhores_solucoes, melhor_solucao_de_todas)
