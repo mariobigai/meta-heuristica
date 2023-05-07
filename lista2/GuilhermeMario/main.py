@@ -42,6 +42,14 @@ def aco(cidades, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
     melhor_caminho = None
     tamanho_melhor_caminho = np.inf
 
+    # Variáveis para fitness temporal
+    fitness_melhor_temp = []
+    fitness_medio_temp = []
+    fitness_pior_temp = []
+
+    #Critério de parada
+    iteracao_sem_melhoria = 0
+
     #laço principal
     for iteracao in range(n_iteracoes):
         caminhos = []
@@ -80,10 +88,19 @@ def aco(cidades, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
             caminhos.append(caminho)
             tamanho_caminhos.append(tamanho_caminho)
 
+
+
             #salva melhor caminho e seu tamanho
             if tamanho_caminho < tamanho_melhor_caminho:
                 melhor_caminho = caminho
                 tamanho_melhor_caminho = tamanho_caminho
+            else:
+                iteracao_sem_melhoria += 1
+
+            # Atualiza listas para fitness temporal
+            fitness_melhor_temp.append(tamanho_melhor_caminho)
+            fitness_medio_temp.append(np.average(tamanho_caminhos))
+            fitness_pior_temp.append(max(tamanho_caminhos))
 
             #Atualização dos feromônios
             for caminho, tamanho_caminho in zip(caminhos, tamanho_caminhos):
@@ -92,15 +109,23 @@ def aco(cidades, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
                     matriz_feromonios[caminho[i], caminho[i+1]] += Q / tamanho_caminho
                 matriz_feromonios[caminho[-1], caminho[0]] *= (1 - taxa_evaporacao)
                 matriz_feromonios[caminho[-1], caminho[0]] += Q / tamanho_caminho
-    return caminhos, tamanho_caminhos, melhor_caminho, tamanho_melhor_caminho, matriz_feromonios
+
+            if iteracao_sem_melhoria == 10:
+                break
+
+    return melhor_caminho, tamanho_melhor_caminho, fitness_melhor_temp, fitness_medio_temp, fitness_pior_temp, iteracao
 
 cidades = carrega_cidades('djibout.txt')
 num_cidades = len(cidades)
 matriz_custo = init_matriz_custo(num_cidades, cidades)
 
-caminhos, tamanho_caminhos, melhor_caminho, tamanho_melhor_caminho, matriz_feromonios = aco(cidades, 40, 1.0, 5.0, 0.5, 100)
+melhor_caminho, tamanho_melhor_caminho, fitness_melhor_temp, fitness_medio_temp, fitness_pior_temp, iteracao = aco(cidades, 25, 1.0, 5.0, 0.5, 100)
 print(melhor_caminho, tamanho_melhor_caminho)
 print('\n')
-print(min(tamanho_caminhos))
+print(fitness_melhor_temp)
 print('\n')
-print(matriz_feromonios)
+print(fitness_medio_temp)
+print('\n')
+print(fitness_pior_temp)
+print('\n')
+print(iteracao)
