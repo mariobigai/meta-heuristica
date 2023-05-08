@@ -35,10 +35,10 @@ def init_matriz_feromonios(num_cidades):
     A = np.ones((num_cidades, num_cidades))
     return (A - np.identity(num_cidades))*10e-6
 
-def aco(cidades, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
+def aco(cidades, n_formigas, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
     # Inicializa
     num_cidades = len(cidades)
-    num_formigas = num_cidades
+    num_formigas = n_formigas
     matriz_feromonios = init_matriz_feromonios(num_cidades)
     melhor_caminho = None
     tamanho_melhor_caminho = np.inf
@@ -111,8 +111,7 @@ def aco(cidades, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
         fitness_pior_temp.append(max(tamanho_caminhos))
 
         #Evapora feromônios
-        matriz_feromonios = matriz_feromonios -  matriz_feromonios*(1-taxa_evaporacao)
-        print(matriz_feromonios)
+        matriz_feromonios = matriz_feromonios - matriz_feromonios*(1-taxa_evaporacao)
 
         #Deposita feromônios
         for caminho, tamanho_caminho in zip(caminhos, tamanho_caminhos):
@@ -122,19 +121,24 @@ def aco(cidades, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
 
         iteracao += 1
 
-    return melhor_caminho, tamanho_melhor_caminho, fitness_melhor_temp, fitness_medio_temp, fitness_pior_temp, iteracao
+    fitness_temp = [fitness_melhor_temp, fitness_medio_temp, fitness_pior_temp]
+    return melhor_caminho, tamanho_melhor_caminho, iteracao, fitness_temp
 
 cidades = carrega_cidades('Luxemburgo-sem-rep.txt')
 num_cidades = len(cidades)
 matriz_custo = init_matriz_custo(num_cidades, cidades)
+iteracoes_box_plot = []
+for i in range(5):
+    melhor_caminho, tamanho_melhor_caminho, iteracao, fitness_temp = aco(cidades, int(len(cidades)/10), 25, 1.0, 5.0, 0.5, 100)
+    iteracoes_box_plot.append(iteracao)
+    plots.plotMapa(f'Luxemburgo - Iteração {i}', cidades, melhor_caminho)
 
-melhor_caminho, tamanho_melhor_caminho, fitness_melhor_temp, fitness_medio_temp, fitness_pior_temp, iteracao = aco(cidades, 25, 1.0, 5.0, 0.5, 100)
-print(melhor_caminho, tamanho_melhor_caminho)
-print('\n')
-# print(fitness_melhor_temp)
-# print('\n')
-# print(fitness_medio_temp)
-# print('\n')
-# print(len(fitness_pior_temp))
-print(iteracao)
-plots.plotMapa('Luxemburgo', cidades, melhor_caminho)
+    valor_maximo = max([max(lista) for lista in fitness_temp]) #Maior fitness de todos
+    valor_minimo = min([min(lista) for lista in fitness_temp]) #Menor fitness de todos
+
+    pior_fitness_temporal_nomalizado = [1/(1+((fit-valor_minimo)/(valor_maximo-valor_minimo))) for fit in fitness_temp[2]]
+    medio_fitness_temporal_nomalizado = [1/(1+(fit - valor_minimo) / (valor_maximo - valor_minimo)) for fit in fitness_temp[1]]
+    melhor_fitness_temporal_nomalizado = [1/(1+(fit - valor_minimo) / (valor_maximo - valor_minimo)) for fit in fitness_temp[0]]
+    plots.plotFitnessTemporal(f'Fiteness Temporal Luxemburgo - Iteração {i}', range(len(melhor_fitness_temporal_nomalizado)),
+                              pior_fitness_temporal_nomalizado, medio_fitness_temporal_nomalizado, melhor_fitness_temporal_nomalizado)
+plots.plota_boxplot(iteracoes_box_plot, 'Luxemburgo')

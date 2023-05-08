@@ -11,27 +11,27 @@ def plotMapa(nome_cidade, cities, path: list):
               y.append(point[2])
        # noinspection PyUnusedLocal
        y = list(map(operator.sub, [max(y) for i in range(len(cities))], y))
-       plt.plot(x, y, 'co')
+       plt.plot(x, y, 'c.', alpha=0.5)
 
        for _ in range(1, len(path)):
               i = path[_ - 1]
               j = path[_]
               # noinspection PyUnresolvedReferences
-              plt.arrow(x[i], y[i], x[j] - x[i], y[j] - y[i], color='r', length_includes_head=True)
+              plt.arrow(x[i], y[i], x[j] - x[i], y[j] - y[i], color='r', length_includes_head=True, width=0.001)
 
        # Conecta o ultimo ponto ao primeiro
        i = path[-1]
        j = path[0]
        # noinspection PyUnresolvedReferences
-       plt.arrow(x[i], y[i], x[j] - x[i], y[j] - y[i], color='r', length_includes_head=True)
+       plt.arrow(x[i], y[i], x[j] - x[i], y[j] - y[i], color='r', length_includes_head=True, width=0.001)
 
        # noinspection PyTypeChecker
-       plt.xlim(min(x) / 1.01, max(x) * 1.01)
+       plt.xlim(min(x) - 50, max(x) + 50)
        # noinspection PyTypeChecker
        plt.ylim(min(y) / 1.1, max(y) * 1.1)
        # Salva o plot como um arquivo PNG
        plt.savefig(f'{nome_cidade}.png')
-       plt.show()
+       #plt.show()
 
 
 def plota_boxplot(dados, nome_cidade):
@@ -44,7 +44,7 @@ def plota_boxplot(dados, nome_cidade):
        #Salva o boxplot
        plt.savefig(f'./Boxplot{nome_cidade}')
        #Plota o boxplot
-       plt.show()
+       #plt.show()
 
 def plotFitnessTemporal(titulo, gen, fitPior, fitMedio, fitMelhor):
        fig, ax = plt.subplots()
@@ -56,5 +56,5 @@ def plotFitnessTemporal(titulo, gen, fitPior, fitMedio, fitMelhor):
        ax.set_xlabel("Gerações")
        ax.set_ylabel("Fitness Normalizado")
        plt.savefig(f'./Temporal {titulo}')
-       plt.show()
+       #plt.show()
 
