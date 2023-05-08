@@ -124,14 +124,18 @@ def aco(cidades, n_formigas, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
     fitness_temp = [fitness_melhor_temp, fitness_medio_temp, fitness_pior_temp]
     return melhor_caminho, tamanho_melhor_caminho, iteracao, fitness_temp
 
-cidades = carrega_cidades('Luxemburgo-sem-rep.txt')
+cidades = carrega_cidades('djibout.txt')
 num_cidades = len(cidades)
 matriz_custo = init_matriz_custo(num_cidades, cidades)
 iteracoes_box_plot = []
+melhores_caminhos = []
+melhores_distancias = []
 for i in range(5):
-    melhor_caminho, tamanho_melhor_caminho, iteracao, fitness_temp = aco(cidades, int(len(cidades)/10), 25, 1.0, 5.0, 0.5, 100)
+    melhor_caminho, tamanho_melhor_caminho, iteracao, fitness_temp = aco(cidades, len(cidades), 25, 1.0, 5.0, 0.5, 100)
     iteracoes_box_plot.append(iteracao)
-    plots.plotMapa(f'Luxemburgo - Iteração {i}', cidades, melhor_caminho)
+    melhores_caminhos.append(melhor_caminho)
+    melhores_distancias.append(tamanho_melhor_caminho)
+    plots.plotMapa(f'Djibouti - Iteração {i}', cidades, melhor_caminho)
 
     valor_maximo = max([max(lista) for lista in fitness_temp]) #Maior fitness de todos
     valor_minimo = min([min(lista) for lista in fitness_temp]) #Menor fitness de todos
@@ -139,6 +143,9 @@ for i in range(5):
     pior_fitness_temporal_nomalizado = [1/(1+((fit-valor_minimo)/(valor_maximo-valor_minimo))) for fit in fitness_temp[2]]
     medio_fitness_temporal_nomalizado = [1/(1+(fit - valor_minimo) / (valor_maximo - valor_minimo)) for fit in fitness_temp[1]]
     melhor_fitness_temporal_nomalizado = [1/(1+(fit - valor_minimo) / (valor_maximo - valor_minimo)) for fit in fitness_temp[0]]
-    plots.plotFitnessTemporal(f'Fiteness Temporal Luxemburgo - Iteração {i}', range(len(melhor_fitness_temporal_nomalizado)),
+    plots.plotFitnessTemporal(f'Fiteness Temporal Djibouti - Iteração {i}', range(len(melhor_fitness_temporal_nomalizado)),
                               pior_fitness_temporal_nomalizado, medio_fitness_temporal_nomalizado, melhor_fitness_temporal_nomalizado)
-plots.plota_boxplot(iteracoes_box_plot, 'Luxemburgo')
+plots.plota_boxplot(iteracoes_box_plot, 'Djibouti')
+np.savetxt('./ListaCaminhosDjibouti.txt', melhores_caminhos, fmt='%d')
+np.savetxt('./ListaDistanciasDjibouti.txt', melhores_distancias, fmt='%f')
+np.savetxt('./ListaIteracoes.txt', iteracoes_box_plot, fmt='%d')
