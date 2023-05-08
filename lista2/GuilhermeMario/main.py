@@ -1,6 +1,7 @@
 # arquivo principal
 import math
 import numpy as np
+import plots
 
 # lendo arquivos e extraindo os pontos
 def carrega_cidades(nome):
@@ -50,10 +51,12 @@ def aco(cidades, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
     #Critério de parada
     iteracao_sem_melhoria = 0
 
+    iteracao = 0
     #laço principal
-    for iteracao in range(n_iteracoes):
+    while iteracao < n_iteracoes and iteracao_sem_melhoria < 5:
         caminhos = []
         tamanho_caminhos = []
+        aux = tamanho_melhor_caminho
 
         # laço de construção dos caminhos
         for formiga in range(num_formigas):
@@ -88,44 +91,50 @@ def aco(cidades, n_iteracoes, alpha, beta, taxa_evaporacao, Q):
             caminhos.append(caminho)
             tamanho_caminhos.append(tamanho_caminho)
 
-
-
             #salva melhor caminho e seu tamanho
             if tamanho_caminho < tamanho_melhor_caminho:
                 melhor_caminho = caminho
                 tamanho_melhor_caminho = tamanho_caminho
+                # iteracao_sem_melhoria = 0
             else:
-                iteracao_sem_melhoria += 1
+                pass
+                # iteracao_sem_melhoria += 1
 
-            # Atualiza listas para fitness temporal
-            fitness_melhor_temp.append(tamanho_melhor_caminho)
-            fitness_medio_temp.append(np.average(tamanho_caminhos))
-            fitness_pior_temp.append(max(tamanho_caminhos))
+        if tamanho_melhor_caminho != aux:
+            iteracao_sem_melhoria = 0
+        else:
+            iteracao_sem_melhoria +=1
 
-            #Atualização dos feromônios
-            for caminho, tamanho_caminho in zip(caminhos, tamanho_caminhos):
-                for i in range(num_cidades-1):
-                    matriz_feromonios[caminho[i], caminho[i+1]] *= (1-taxa_evaporacao)
-                    matriz_feromonios[caminho[i], caminho[i+1]] += Q / tamanho_caminho
-                matriz_feromonios[caminho[-1], caminho[0]] *= (1 - taxa_evaporacao)
-                matriz_feromonios[caminho[-1], caminho[0]] += Q / tamanho_caminho
+        # Atualiza listas para fitness temporal
+        fitness_melhor_temp.append(tamanho_melhor_caminho)
+        fitness_medio_temp.append(np.average(tamanho_caminhos))
+        fitness_pior_temp.append(max(tamanho_caminhos))
 
-            if iteracao_sem_melhoria == 10:
-                break
+        #Evapora feromônios
+        matriz_feromonios = matriz_feromonios -  matriz_feromonios*(1-taxa_evaporacao)
+        print(matriz_feromonios)
+
+        #Deposita feromônios
+        for caminho, tamanho_caminho in zip(caminhos, tamanho_caminhos):
+            for i in range(num_cidades-1):
+                matriz_feromonios[caminho[i], caminho[i+1]] += Q / tamanho_caminho
+            matriz_feromonios[caminho[-1], caminho[0]] += Q / tamanho_caminho
+
+        iteracao += 1
 
     return melhor_caminho, tamanho_melhor_caminho, fitness_melhor_temp, fitness_medio_temp, fitness_pior_temp, iteracao
 
-cidades = carrega_cidades('djibout.txt')
+cidades = carrega_cidades('Luxemburgo-sem-rep.txt')
 num_cidades = len(cidades)
 matriz_custo = init_matriz_custo(num_cidades, cidades)
 
 melhor_caminho, tamanho_melhor_caminho, fitness_melhor_temp, fitness_medio_temp, fitness_pior_temp, iteracao = aco(cidades, 25, 1.0, 5.0, 0.5, 100)
 print(melhor_caminho, tamanho_melhor_caminho)
 print('\n')
-print(fitness_melhor_temp)
-print('\n')
-print(fitness_medio_temp)
-print('\n')
-print(fitness_pior_temp)
-print('\n')
+# print(fitness_melhor_temp)
+# print('\n')
+# print(fitness_medio_temp)
+# print('\n')
+# print(len(fitness_pior_temp))
 print(iteracao)
+plots.plotMapa('Luxemburgo', cidades, melhor_caminho)
