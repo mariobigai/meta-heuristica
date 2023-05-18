@@ -73,14 +73,15 @@ def one_max_pso(num_particles, num_dimensions):
 
     execution_time = end_time - start_time
 
-    return global_best_position, best_fitness, average_fitness, worst_fitness, normalized_best_fitness, normalized_average_fitness, normalized_worst_fitness, execution_time
+    return global_best_position, best_fitness, average_fitness, worst_fitness, normalized_best_fitness, normalized_average_fitness, normalized_worst_fitness, execution_time, iteration
 
 # Exemplo de uso
 num_particles = 100
 num_dimensions = 100
 
-solution, best_fitness, average_fitness, worst_fitness, normalized_best_fitness, normalized_average_fitness, normalized_worst_fitness, execution_time = one_max_pso(num_particles, num_dimensions)
+solution, best_fitness, average_fitness, worst_fitness, normalized_best_fitness, normalized_average_fitness, normalized_worst_fitness, execution_time, itera = one_max_pso(num_particles, num_dimensions)
 print("Melhor solução encontrada:", solution)
+print("Número de iterações:", itera)
 print("Melhor fitness:", best_fitness)
 print("Média fitness:", average_fitness)
 print("Pior fitness:", worst_fitness)
