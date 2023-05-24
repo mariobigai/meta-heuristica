@@ -141,7 +141,7 @@ class BBCSO:
         return self.gbest_fitness, np.mean(lista_fitness), np.min(lista_fitness)
 
     def seleciona_tracing_seeking(self):
-        #Ordenando por fitness crescente
+        #Ordenando por fitness crescente - é aqui que usamos o __lt__ da classe Gato
         self.gatos.sort(reverse=True)
 
         n_gatos_tracing = math.floor(self.parametros['MR']*self.n_gatos)
@@ -161,8 +161,11 @@ class BBCSO:
         melhor_fitness = []
         medio_fitness = []
         pior_fitness = []
-        self.define_gbest()
-        while (self.gbest_fitness != sum(dimensoes*[1.])):
+        criterio_parada = True
+        interacoes_sem_melhoria = 0
+        #self.define_gbest()
+        while (criterio_parada):
+
             melhor_atual, medio_atual, pior_atual = self.define_gbest()
             melhor_fitness.append(melhor_atual)
             medio_fitness.append(medio_atual)
@@ -170,11 +173,16 @@ class BBCSO:
             self.seleciona_tracing_seeking()
             self.move_gatos()
             iteracoes += 1
+
+            if self.gbest_fitness == sum(dimensoes*[1.]):
+                interacoes_sem_melhoria += 1
+
+            if interacoes_sem_melhoria == 5:
+                criterio_parada = False
+
         melhor_atual, medio_atual, pior_atual = self.define_gbest()
         melhor_fitness.append(melhor_atual)
         medio_fitness.append(medio_atual)
         pior_fitness.append(pior_atual)
         return iteracoes, melhor_fitness, medio_fitness, pior_fitness
 
-        self.define_gbest()
-        return self.gbest, self.gbest_fitness, iteracoes
