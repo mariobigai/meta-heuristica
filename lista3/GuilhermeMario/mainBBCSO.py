@@ -1,5 +1,4 @@
 import math
-import numpy
 import numpy as np
 
 from bbcso import BBCSO
