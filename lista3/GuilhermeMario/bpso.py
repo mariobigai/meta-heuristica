@@ -54,7 +54,12 @@ def binary_pso(pop_size, num_dimensions, i_w, c_w, s_w):
     global_best = personal_best[global_best_index]
 
     iteration = 0
-    while global_best_fitness < num_dimensions:
+    best_fitness_list = []
+    average_fitness_list = []
+    worst_fitness_list = []
+    criterio_parada = True
+    interacoes_sem_melhoria = 0
+    while (criterio_parada):
         for i in range(pop_size):
             particle, velocity[i] = update_particle(
                 population[i], velocity[i], personal_best[i], global_best, inertia_weight, cognitive_weight, social_weight
@@ -68,7 +73,16 @@ def binary_pso(pop_size, num_dimensions, i_w, c_w, s_w):
 
         global_best, global_best_fitness = update_global_best(population, global_best, global_best_fitness)
 
-        iteration += 1
-        print(global_best_fitness)
+        best_fitness_list.append(global_best_fitness / num_dimensions)
+        average_fitness_list.append(np.mean(personal_best_fitness) / num_dimensions)
+        worst_fitness_list.append(min(personal_best_fitness) / num_dimensions)
 
-    return global_best, personal_best_fitness, global_best_fitness, iteration
+        if(global_best_fitness == num_dimensions):
+            interacoes_sem_melhoria += 1
+
+        if interacoes_sem_melhoria == 5:
+            criterio_parada = False
+
+        iteration += 1
+
+    return global_best, best_fitness_list, average_fitness_list, worst_fitness_list, iteration
