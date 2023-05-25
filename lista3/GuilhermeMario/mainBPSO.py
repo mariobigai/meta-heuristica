@@ -4,7 +4,7 @@ import bpso
 import plots
 
 # Definir tamanho da população e número de dimensões
-population_size = 500
+population_size = 25
 dimensions = 500
 
 # Parâmetros do PSO

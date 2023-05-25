@@ -4,7 +4,7 @@ import numpy as np
 from bbcso import BBCSO
 import plots
 
-dimensoes = 100
+dimensoes = 500
 #dicionário de parâmetros
 parametros = {
     'MR': 0.6,
