@@ -3,7 +3,6 @@
 """
 Código inspirado em: https://github.com/CacaAlves00/BBCSO
 """
-import operator
 from operator import xor
 import math
 import random
@@ -142,15 +141,18 @@ class BBCSO:
 
     def seleciona_tracing_seeking(self):
         #Ordenando por fitness crescente - é aqui que usamos o __lt__ da classe Gato
-        self.gatos.sort(reverse=True)
+        #self.gatos.sort(reverse=True)
+        lista_fitness = [gato.avalia_fitness() for gato in self.gatos]
 
         n_gatos_tracing = math.floor(self.parametros['MR']*self.n_gatos)
 
         #Separa os gatos em TRACING e SEEKING de acordo com o MR - Porcentagem de gatos fazendo Tracing
-        for gato_index in range(0, n_gatos_tracing):
-            self.gatos[gato_index].tipo = Tipo_de_Gato.TRACING
-        for gato_index in range(n_gatos_tracing, self.n_gatos):
-            self.gatos[gato_index].tipo = Tipo_de_Gato.SEEKING
+        for _ in range(0, n_gatos_tracing):
+            gato_selecionado = roulette(self.gatos, lista_fitness)
+            gato_selecionado.tipo = Tipo_de_Gato.TRACING
+        for gato_index in range(0, self.n_gatos):
+            if self.gatos[gato_index].tipo is None:
+                self.gatos[gato_index].tipo = Tipo_de_Gato.SEEKING
 
     def move_gatos(self):
         for gato_index in range(0, self.n_gatos):

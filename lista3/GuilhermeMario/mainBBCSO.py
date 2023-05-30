@@ -41,7 +41,7 @@ for i in range(1,31):
 
     lista_iteracoes.append(iteracoes)
 print(lista_iteracoes)
-np.savetxt('BBCSO (OneMax D = {}) - Lista de iterações', lista_iteracoes, fmt='%d')
-np.savetxt('BBCSO (OneMax D = {}) - gbests', lista_gbest, fmt='%d')
-np.savetxt('BBCSO (OneMax D = {}) - gbests_fitness', lista_gbest_fitness, fmt='%d')
+np.savetxt('BBCSO (OneMax D = {}) - Lista de iterações'.format(dimensoes), lista_iteracoes, fmt='%d')
+np.savetxt('BBCSO (OneMax D = {}) - gbests'.format(dimensoes), lista_gbest, fmt='%d')
+np.savetxt('BBCSO (OneMax D = {}) - gbests_fitness'.format(dimensoes), lista_gbest_fitness, fmt='%d')
 plots.plota_boxplot(lista_iteracoes, 'BBCSO (OneMax D = {})'.format(dimensoes))
